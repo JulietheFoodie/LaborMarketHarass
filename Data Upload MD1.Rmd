@@ -9,20 +9,54 @@ output: html_document
 
 ```{r}
 library(readxl)
-
+library(readr)
+library(dplyr)
 ```
 
 
 ```{r}
-Receipts <- read_excel("SH Charge Receipts.xlsx")
+EEOCdf <- read_excel("SH Charge Receipts.xlsx")
 #View(SH_Charge_Receipts)
 ```
 
 ```{r}
-str(Receipts)
+EEOCdf$DATE <- EEOCdf$CHARGE_FILING_DATE
 ```
 
+
 ```{r}
-Receipts$CHARGE_FILING_DATE <- as.Date.POSIXct(Receipts$CHARGE_FILING_DATE, "%Y-%m-%d", tz = "GMT")
+EEOCdf$CHARGE_FILING_DATE <- as.Date.POSIXct(EEOCdf$CHARGE_FILING_DATE, "%Y-%m-%d", tz = "GMT")
 ```
+
+buzzfeed github
+https://github.com/BuzzFeedNews/2017-12-eeoc-harassment-charges 
+
+
+```{r}
+str(EEOCdf)
+```
+
+
+```{r}
+#Labor Market Conditions Index
+LMCIdf <- read_csv("FRBKCLMCIM.csv")
+
+
+```
+
+
+# Join
+
+```{r}
+FINALdf <- inner_join(EEOCdf, LMCIdf)
+
+
+```
+
+
+
+
+
+
+
 
