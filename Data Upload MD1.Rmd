@@ -1,0 +1,28 @@
+---
+title: "Data MD1"
+author: "Julie Norman"
+date: "2/3/2019"
+output: html_document
+---
+
+#Library
+
+```{r}
+library(readxl)
+
+```
+
+
+```{r}
+Receipts <- read_excel("SH Charge Receipts.xlsx")
+#View(SH_Charge_Receipts)
+```
+
+```{r}
+str(Receipts)
+```
+
+```{r}
+Receipts$CHARGE_FILING_DATE <- as.Date.POSIXct(Receipts$CHARGE_FILING_DATE, "%Y-%m-%d", tz = "GMT")
+```
+
