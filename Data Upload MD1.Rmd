@@ -11,8 +11,11 @@ output: html_document
 library(readxl)
 library(readr)
 library(dplyr)
+library(tidyverse)
+library(lubridate)
 ```
 
+# Harrasment reports 
 
 ```{r}
 EEOCdf <- read_excel("SH Charge Receipts.xlsx")
@@ -28,6 +31,11 @@ EEOCdf$DATE <- EEOCdf$CHARGE_FILING_DATE
 EEOCdf$CHARGE_FILING_DATE <- as.Date.POSIXct(EEOCdf$CHARGE_FILING_DATE, "%Y-%m-%d", tz = "GMT")
 ```
 
+```{r}
+EEOCdf$DATEym <- format(EEOCdf$DATE, "%Y-%m")
+```
+
+
 buzzfeed github
 https://github.com/BuzzFeedNews/2017-12-eeoc-harassment-charges 
 
@@ -36,6 +44,7 @@ https://github.com/BuzzFeedNews/2017-12-eeoc-harassment-charges
 str(EEOCdf)
 ```
 
+# Labor Market Momentum Index
 
 ```{r}
 #Labor Market Conditions Index
@@ -44,12 +53,45 @@ LMCIdf <- read_csv("FRBKCLMCIM.csv")
 
 ```
 
+```{r}
+LMCIdf$DATEym <- format(LMCIdf$DATE, "%Y-%m")
+```
+
+https://fred.stlouisfed.org/series/LREM25TTUSM156S#
+
+
+#Enployment Rate
+
+```{r}
+EMPLRTdf <- read_csv("LREM25TTUSM156S.csv")
+```
+
+```{r}
+EMPLRTdf %>% filter(EMPLRTdf$DATE >= "1995-01-01")
+```
+
+```{r}
+EMPLRTdf$DATEym <- format(EMPLRTdf$DATE, "%Y-%m")
+
+str(EMPLRTdf$DATEym)
+```
+
+
+https://fred.stlouisfed.org/series/LREM25TTUSM156S#
 
 # Join
 
 ```{r}
-FINALdf <- inner_join(EEOCdf, LMCIdf)
 
+FINALdf <- list(EEOCdf, LMCIdf, EMPLRTdf) %>% 
+ reduce(left_join, by = "DATEym") 
+
+#convert to date
+FINALdf$DATEymx <- ymd(FINALdf$DATEym,truncated = 1)
+
+
+
+str(FINALdf)
 
 ```
 
