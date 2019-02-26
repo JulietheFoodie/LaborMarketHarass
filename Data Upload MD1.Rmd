@@ -96,6 +96,27 @@ str(FINALdf)
 ```
 
 
+```{r}
+ggplot(FINALdf, aes(x = FINALdf$CP_SEX)) +
+  geom_bar()
+```
+
+```{r}
+ggplot(FINALdf, aes( x = FINALdf$CHARGE_FILING_DATE)) +
+  geom_bar()
+  
+```
+
+```{r}
+ggplot(FINALdf, aes( x = FINALdf$DATEym)) +
+  geom_bar()
+  
+```
+
+
+
+
+
 
 
 
