@@ -54,7 +54,7 @@ selectdf <- select(EEOCdf, CHARGE_FILING_DATE, R_NUMBER_OF_EMPLOYEES, R_TYPE, DA
 sex<- table(selectdf$DATEym, selectdf$CP_SEX)
 
 sexdf<- as.data.frame(sex)
-reshape(sexdf, idvar = "Var1", timevar = "Var2", direction = "wide")
+sexdf <- reshape(sexdf, idvar = "Var1", timevar = "Var2", direction = "wide")
 ```
 
 ### R_TYPE
@@ -62,7 +62,7 @@ reshape(sexdf, idvar = "Var1", timevar = "Var2", direction = "wide")
 firmtype<- table(selectdf$DATEym, selectdf$R_TYPE)
 
 firmtypedf<- as.data.frame(firmtype)
-reshape(firmtypedf, idvar = "Var1", timevar = "Var2", direction = "wide")
+firmtypedf <- reshape(firmtypedf, idvar = "Var1", timevar = "Var2", direction = "wide")
 ```
 
 ### R_NUMBER_OF_EMPLOYEES 
@@ -71,7 +71,7 @@ reshape(firmtypedf, idvar = "Var1", timevar = "Var2", direction = "wide")
 firmsize <- table(selectdf$DATEym, selectdf$R_NUMBER_OF_EMPLOYEES)
 
 firmsizedf<- as.data.frame(firmsize)
-reshape(firmsizedf, idvar = "Var1", timevar = "Var2", direction = "wide")
+firmsizedf <- reshape(firmsizedf, idvar = "Var1", timevar = "Var2", direction = "wide")
 ```
 
 ```{r}
@@ -85,6 +85,7 @@ str(aggmondf)
 ### rename columns
 
 ```{r}
+colnames(aggmondf$Var1) <- "DATEym"
 
 ```
 
