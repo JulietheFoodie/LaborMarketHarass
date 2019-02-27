@@ -40,9 +40,57 @@ buzzfeed github
 https://github.com/BuzzFeedNews/2017-12-eeoc-harassment-charges 
 
 
+## Clean
+
 ```{r}
-str(EEOCdf)
+
+
+selectdf <- select(EEOCdf, CHARGE_FILING_DATE, R_NUMBER_OF_EMPLOYEES, R_TYPE, DATE, DATEym, CP_SEX)
+
 ```
+
+### Complaintant Gender
+```{r}
+sex<- table(selectdf$DATEym, selectdf$CP_SEX)
+
+sexdf<- as.data.frame(sex)
+reshape(sexdf, idvar = "Var1", timevar = "Var2", direction = "wide")
+```
+
+### R_TYPE
+```{r}
+firmtype<- table(selectdf$DATEym, selectdf$R_TYPE)
+
+firmtypedf<- as.data.frame(firmtype)
+reshape(firmtypedf, idvar = "Var1", timevar = "Var2", direction = "wide")
+```
+
+### R_NUMBER_OF_EMPLOYEES 
+
+```{r}
+firmsize <- table(selectdf$DATEym, selectdf$R_NUMBER_OF_EMPLOYEES)
+
+firmsizedf<- as.data.frame(firmsize)
+reshape(firmsizedf, idvar = "Var1", timevar = "Var2", direction = "wide")
+```
+
+```{r}
+prt1df <- merge(firmsizedf, firmtypedf, by = "Var1")
+
+aggmondf <- merge(prt1df, sexdf, by = "Var1")
+
+str(aggmondf)
+```
+
+### rename columns
+
+```{r}
+
+```
+
+
+
+
 
 # Labor Market Momentum Index
 
@@ -115,6 +163,13 @@ ggplot(FINALdf, aes( x = FINALdf$DATEym)) +
 
 
 
+```{r}
+table(FINALdf$DATEym)
+
+ggplot(FINALdf, aes( x = FINALdf$DATEym)) +
+  geom_point()
+  
+```
 
 
 
