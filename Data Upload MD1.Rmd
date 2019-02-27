@@ -77,15 +77,25 @@ firmsizedf <- reshape(firmsizedf, idvar = "Var1", timevar = "Var2", direction = 
 ```{r}
 prt1df <- merge(firmsizedf, firmtypedf, by = "Var1")
 
-aggmondf <- merge(prt1df, sexdf, by = "Var1")
+eeocdf <- merge(prt1df, sexdf, by = "Var1")
 
-str(aggmondf)
+str(eeocdf)
 ```
 
 ### rename columns
 
 ```{r}
-colnames(aggmondf$Var1) <- "DATEym"
+colnames(eeocdf)[colnames(eeocdf) == "Var1"] <- "DATEym"
+
+
+
+eeocdf$count <- eeocdf$`Freq.CP Sex Not Available/Applicable`+ eeocdf$Freq.Female + eeocdf$Freq.Male +eeocdf$Freq.NULL
+
+eeocdf$prop.fem <- eeocdf$Freq.Female/eeocdf$count
+
+eeocdf$prop.priv <- eeocdf$`Freq.Private Employer`/eeocdf$count
+
+
 
 ```
 
@@ -132,7 +142,7 @@ https://fred.stlouisfed.org/series/LREM25TTUSM156S#
 
 ```{r}
 
-FINALdf <- list(EEOCdf, LMCIdf, EMPLRTdf) %>% 
+FINALdf <- list(eeocdf, LMCIdf, EMPLRTdf) %>% 
  reduce(left_join, by = "DATEym") 
 
 #convert to date
