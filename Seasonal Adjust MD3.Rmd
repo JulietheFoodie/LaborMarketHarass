@@ -27,7 +27,7 @@ coding via: https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/
 # Plot
 
 ```{r}
-tsdf <- ts(df$count, frequency = 12, start = c(1995, 10))
+tsdf <- ts(df$Count.Report, frequency = 12, start = c(1995, 10))
 ```
 
 ```{r}
@@ -82,17 +82,17 @@ plot.ts(adjts)
 
 adjts_df <- as.data.frame(adjts)
 
-adjts_df$row <- seq.int(nrow(adjts_df))
+adjts_df$X1 <- seq.int(nrow(adjts_df))
 
-# dates
+# Dates
 
-DATE.x <- as.Date(as.yearmon(time(adjts)))
+DATEymd <- as.Date(as.yearmon(time(adjts)))
 
 
 
-DATE.x_df <- as.data.frame(DATE.x)
+DATEymd_df <- as.data.frame(DATEymd)
 
-DATE.x_df$row <- seq.int(nrow(DATE.x_df))
+DATEymd_df$X1 <- seq.int(nrow(DATEymd_df))
 
 
 ```
@@ -102,11 +102,11 @@ DATE.x_df$row <- seq.int(nrow(DATE.x_df))
 
 ```{r}
 
-seasadj_df <- full_join(DATE.x_df, adjts_df, by = "row")
+seasadj_df <- full_join(DATEymd_df, adjts_df, by = "X1")
 
-names(seasadj_df)[names(seasadj_df) == 'x'] <- 'seas_count'
+names(seasadj_df)[names(seasadj_df) == 'x'] <- 'SeasCount.Report'
 
-seasadj_df
+str(seasadj_df)
 
 ```
 
@@ -114,8 +114,19 @@ seasadj_df
 
 
 ```{r}
-finalSdf <- join(df, seasadj_df, by = "DATE.x")
+finalSdf <- join(df, seasadj_df, by = "X1")
+
+
 ```
+
+## Delete Redundent Columns
+
+```{r}
+finalSdf$DATE.x <- NULL
+
+str(finalSdf)
+```
+
 
 # Export 
 

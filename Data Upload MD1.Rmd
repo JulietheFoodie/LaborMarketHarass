@@ -13,6 +13,7 @@ library(readr)
 library(dplyr)
 library(tidyverse)
 library(lubridate)
+
 ```
 
 # Harrasment reports 
@@ -33,6 +34,7 @@ EEOCdf$CHARGE_FILING_DATE <- as.Date.POSIXct(EEOCdf$CHARGE_FILING_DATE, "%Y-%m-%
 
 ```{r}
 EEOCdf$DATEym <- format(EEOCdf$DATE, "%Y-%m")
+str(EEOCdf$DATEym)
 ```
 
 
@@ -43,13 +45,11 @@ https://github.com/BuzzFeedNews/2017-12-eeoc-harassment-charges
 ## Clean
 
 ```{r}
-
-
 selectdf <- select(EEOCdf, CHARGE_FILING_DATE, R_NUMBER_OF_EMPLOYEES, R_TYPE, DATE, DATEym, CP_SEX)
 
 ```
 
-### Complaintant Gender
+### Complaintant Sex
 ```{r}
 sex<- table(selectdf$DATEym, selectdf$CP_SEX)
 
@@ -63,6 +63,8 @@ firmtype<- table(selectdf$DATEym, selectdf$R_TYPE)
 
 firmtypedf<- as.data.frame(firmtype)
 firmtypedf <- reshape(firmtypedf, idvar = "Var1", timevar = "Var2", direction = "wide")
+
+
 ```
 
 ### R_NUMBER_OF_EMPLOYEES 
@@ -74,26 +76,29 @@ firmsizedf<- as.data.frame(firmsize)
 firmsizedf <- reshape(firmsizedf, idvar = "Var1", timevar = "Var2", direction = "wide")
 ```
 
+
+##Merge
+
 ```{r}
-prt1df <- merge(firmsizedf, firmtypedf, by = "Var1")
+merge1df <- merge(firmsizedf, firmtypedf, by = "Var1")
 
-eeocdf <- merge(prt1df, sexdf, by = "Var1")
+merge2df <- merge(merge1df, sexdf, by = "Var1")
 
-str(eeocdf)
+str(merge2df)
 ```
 
 ### rename columns
 
 ```{r}
-colnames(eeocdf)[colnames(eeocdf) == "Var1"] <- "DATEym"
+colnames(merge2df)[colnames(merge2df) == "Var1"] <- "DATEym"
 
 
 
-eeocdf$count <- eeocdf$`Freq.CP Sex Not Available/Applicable`+ eeocdf$Freq.Female + eeocdf$Freq.Male +eeocdf$Freq.NULL
+merge2df$Count.Report <- merge2df$`Freq.CP Sex Not Available/Applicable`+ merge2df$Freq.Female + merge2df$Freq.Male +merge2df$Freq.NULL
 
-eeocdf$prop.fem <- eeocdf$Freq.Female/eeocdf$count
+merge2df$prop.fem <- merge2df$Freq.Female/merge2df$Count.Report
 
-eeocdf$prop.priv <- eeocdf$`Freq.Private Employer`/eeocdf$count
+merge2df$prop.priv <- merge2df$`Freq.Private Employer`/merge2df$Count.Report
 
 
 
@@ -112,6 +117,7 @@ LMCIdf <- read_csv("FRBKCLMCIM.csv")
 
 ```
 
+# Labor Market Indicator
 ```{r}
 LMCIdf$DATEym <- format(LMCIdf$DATE, "%Y-%m")
 ```
@@ -119,7 +125,7 @@ LMCIdf$DATEym <- format(LMCIdf$DATE, "%Y-%m")
 https://fred.stlouisfed.org/series/LREM25TTUSM156S#
 
 
-#Enployment Rate
+#Employment Rate
 
 ```{r}
 EMPLRTdf <- read_csv("LREM25TTUSM156S.csv")
@@ -127,13 +133,10 @@ EMPLRTdf <- read_csv("LREM25TTUSM156S.csv")
 
 ```{r}
 EMPLRTdf %>% filter(EMPLRTdf$DATE >= "1995-01-01")
-```
 
-```{r}
 EMPLRTdf$DATEym <- format(EMPLRTdf$DATE, "%Y-%m")
-
-str(EMPLRTdf$DATEym)
 ```
+
 
 
 https://fred.stlouisfed.org/series/LREM25TTUSM156S#
@@ -142,45 +145,44 @@ https://fred.stlouisfed.org/series/LREM25TTUSM156S#
 
 ```{r}
 
-FINALdf <- list(eeocdf, LMCIdf, EMPLRTdf) %>% 
+finaldf <- list(merge2df, LMCIdf, EMPLRTdf) %>% 
  reduce(left_join, by = "DATEym") 
 
-#convert to date
-FINALdf$DATEymx <- ymd(FINALdf$DATEym,truncated = 1)
-
-
-
-str(FINALdf)
-
 ```
 
 
+
+# Clean Variables
 ```{r}
-ggplot(FINALdf, aes(x = FINALdf$CP_SEX)) +
-  geom_bar()
+#Redundent
+finaldf$DATE.y <- NULL
+
+#Irrelevant 
+finaldf$Freq.NULL.x <- NULL
+finaldf$Freq.NULL.y <- NULL
+finaldf$Freq.NULL <- NULL
+
+#Ambiguous
+names(finaldf)[names(finaldf) == 'Freq.Other'] <- 'Freq.Other Firm Type'
+
+str(finaldf)
+
 ```
 
-```{r}
-ggplot(FINALdf, aes( x = FINALdf$CHARGE_FILING_DATE)) +
-  geom_bar()
-  
-```
-
-```{r}
-ggplot(FINALdf, aes( x = FINALdf$DATEym)) +
-  geom_bar()
-  
-```
 
 
 
 ```{r}
-table(FINALdf$DATEym)
-
-ggplot(FINALdf, aes( x = FINALdf$DATEym)) +
-  geom_point()
-  
+write.csv(finaldf, file = "export1.csv")
 ```
+
+
+
+
+
+
+
+
 
 
 
