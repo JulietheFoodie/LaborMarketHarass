@@ -1,0 +1,130 @@
+---
+title: "Seasonal Adjust"
+author: "Julie Norman"
+date: "3/16/2019"
+output: html_document
+---
+
+# Library
+
+```{r}
+library("TTR")
+library("readr")
+library("zoo") 
+library("dplyr")
+library("lubridate")
+```
+
+# Upload
+
+```{r}
+df <- read_csv("export1.csv")
+str(df)
+```
+
+coding via: https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/ 
+
+# Plot
+
+```{r}
+tsdf <- ts(df$count, frequency = 12, start = c(1995, 10))
+```
+
+```{r}
+plot.ts(tsdf)
+```
+
+# Data Transformation
+
+## Log
+
+```{r}
+lgts_df <- log(tsdf)
+plot.ts(lgts_df)
+```
+
+## Smoothing
+
+```{r}
+lgts20_df <- SMA(lgts_df, n = 20)
+plot.ts(lgts20_df)
+```
+
+## Decompose
+
+```{r}
+compts_df <- decompose(tsdf)
+
+compts_df$seasonal
+```
+
+
+```{r}
+plot(compts_df)
+```
+
+# Seasonal Adjustment
+
+```{r}
+adjts <- (tsdf - compts_df$seasonal)
+
+plot.ts(adjts)
+
+
+```
+
+# Data Cleaning
+
+## Extract Dates/Rows
+
+```{r}
+# seasonally adjusted reports
+
+adjts_df <- as.data.frame(adjts)
+
+adjts_df$row <- seq.int(nrow(adjts_df))
+
+# dates
+
+DATE.x <- as.Date(as.yearmon(time(adjts)))
+
+
+
+DATE.x_df <- as.data.frame(DATE.x)
+
+DATE.x_df$row <- seq.int(nrow(DATE.x_df))
+
+
+```
+
+
+## Join 
+
+```{r}
+
+seasadj_df <- full_join(DATE.x_df, adjts_df, by = "row")
+
+names(seasadj_df)[names(seasadj_df) == 'x'] <- 'seas_count'
+
+seasadj_df
+
+```
+
+## Join to original data
+
+
+```{r}
+finalSdf <- join(df, seasadj_df, by = "DATE.x")
+```
+
+# Export 
+
+```{r}
+write.csv(finalSdf, file = "export2.csv")
+```
+
+
+
+
+
+

@@ -1,0 +1,82 @@
+---
+title: "Data Exploration"
+author: "Julie Norman"
+date: "3/4/2019"
+output: html_document
+---
+
+# Library
+```{r}
+library(readr)
+library(stringr)
+library(ggplot2)
+library(dplyr)
+library(plyr)
+```
+
+
+# Upload
+```{r}
+
+df <- read_csv("export1.csv")
+str(df)
+```
+
+
+
+
+# Graphs
+
+
+
+
+## Reports by month
+
+```{r}
+
+
+ggplot(df, aes(x = df$DATEymx, y = df$count)) +
+  xlab("Date") + 
+  ylab("Claims per Month")+ 
+  ggtitle("EEOC Sexual Harassment Claims") +
+  theme_bw()+
+  geom_point(size = .75)
+ggsave("claims_time.jpeg")
+```
+
+
+
+
+ 
+
+```{r}
+EEOCdf <- read_excel("SH Charge Receipts.xlsx")
+str(EEOCdf)
+```
+
+## Gender Breakdown   
+```{r}
+ggplot(EEOCdf, aes(x = EEOCdf$CP_SEX)) +
+  xlab("Complaintant Gender") +
+  geom_bar()
+```
+
+
+```{r}
+ EEOCdf$R_NUMBER_OF_EMPLOYEES <- plyr:: revalue(EEOCdf$R_NUMBER_OF_EMPLOYEES, c("101 - 200 Employees" = "101-200", "15 - 100 Employees" = "15-100", "201 - 500 Employees" = "201-500", "Under 15 Employees" = "< 15", "Unknown Number Of Employees" = "Unknown", "501+ Employees" = "501+"))
+
+ggplot(EEOCdf, aes(x = EEOCdf$R_NUMBER_OF_EMPLOYEES)) +
+  xlab("Firm Size by Employee") + ylab("Count") +
+  geom_bar()
+
+
+```
+
+
+
+
+
+
+
+
+
