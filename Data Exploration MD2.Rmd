@@ -35,7 +35,7 @@ str(df)
 ```{r}
 
 
-ggplot(df, aes(x = df$DATEymx, y = df$count)) +
+ggplot(df, aes(x = df$DATEym, y = df$Count.Report)) +
   xlab("Date") + 
   ylab("Claims per Month")+ 
   ggtitle("EEOC Sexual Harassment Claims") +
@@ -66,7 +66,7 @@ ggplot(EEOCdf, aes(x = EEOCdf$CP_SEX)) +
  EEOCdf$R_NUMBER_OF_EMPLOYEES <- plyr:: revalue(EEOCdf$R_NUMBER_OF_EMPLOYEES, c("101 - 200 Employees" = "101-200", "15 - 100 Employees" = "15-100", "201 - 500 Employees" = "201-500", "Under 15 Employees" = "< 15", "Unknown Number Of Employees" = "Unknown", "501+ Employees" = "501+"))
 
 ggplot(EEOCdf, aes(x = EEOCdf$R_NUMBER_OF_EMPLOYEES)) +
-  xlab("Firm Size by Employee") + ylab("Count") +
+  xlab("Firm Size by Employee Number") + ylab("Report Count") +
   geom_bar()
 
 

@@ -1,0 +1,69 @@
+---
+title: "Regression"
+author: "Julie Norman"
+date: "3/16/2019"
+output: html_document
+---
+
+# Library
+
+```{r}
+library("TTR")
+library("readr")
+```
+
+# Upload
+
+```{r}
+df <- read_csv("export1.csv")
+str(df)
+```
+
+coding via: https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/ 
+
+# Plot
+
+```{r}
+tsdf <- ts(df$count, frequency = 12, start = c(1995, 10))
+```
+
+```{r}
+plot.ts(tsdf)
+```
+
+```{r}
+lgts_df <- log(tsdf)
+plot.ts(lgts_df)
+```
+
+## Smoothing
+
+```{r}
+lgts20_df <- SMA(lgts_df, n = 20)
+plot.ts(lgts20_df)
+```
+
+## Decompose
+
+```{r}
+compts_df <- decompose(tsdf)
+
+compts_df$seasonal
+```
+
+
+```{r}
+plot(compts_df)
+```
+
+
+
+
+
+
+
+
+
+
+
+
