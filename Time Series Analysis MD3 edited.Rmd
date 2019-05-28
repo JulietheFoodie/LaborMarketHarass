@@ -1,0 +1,93 @@
+---
+title: "Regression"
+author: "Julie Norman"
+date: "3/16/2019"
+output: html_document
+---
+
+# Library
+
+```{r}
+library("TTR")
+library("readr")
+library("forecast")
+library("dynlm")
+```
+
+# Upload
+
+```{r}
+df <- read_csv("export1.csv")
+str(df)
+```
+
+coding via: https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/ 
+
+# Plot
+
+```{r}
+tsdf <- ts(df$Count.Report , frequency = 12, start = c(1995, 10))
+```
+
+```{r}
+plot.ts(tsdf)
+```
+
+```{r}
+lgts_df <- log(tsdf)
+plot.ts(lgts_df)
+```
+
+## Smoothing
+
+```{r}
+lgts20_df <- SMA(lgts_df, n = 20)
+plot.ts(lgts20_df)
+```
+
+## Decompose
+
+```{r}
+compts_df <- decompose(tsdf)
+
+compts_df$seasonal
+```
+
+
+```{r}
+plot(compts_df)
+```
+
+## Add Econ Data
+
+```{r}
+ccf(df$Count.Report, df$FRBKCLMCIM)
+```
+
+
+```{r}
+ccf(df$Count.Report, df$LREM25TTUSM156S)
+```
+
+# Detrend Time Series
+
+http://r-statistics.co/Time-Series-Analysis-With-R.html
+
+```{r}
+trModel <- lm(df$Count.Report ~ c(1:length(df$Count.Report)))
+trModel
+plot(resid(trModel), type = "l")
+```
+
+
+# dynamic LM
+
+```{r}
+lm <- dynlm(df$Count.Report ~ df$DATE.x + df$FRBKCLMCIM + df$LREM25TTUSM156S)
+
+summary(lm)
+```
+
+
+
+
