@@ -1,0 +1,38 @@
+---
+title: "Model"
+author: "Julie Norman"
+date: "3/20/2019"
+output: html_document
+---
+
+# Libraries
+
+```{r}
+library("dynlm")
+library("stargazer")
+```
+
+
+# Data Upload
+
+```{r}
+finaldf <- read.csv("export2.csv")
+
+str(finaldf)
+```
+
+```{r}
+final.tsdf <- ts(finaldf, frequency = 12, start = c(1995, 10))
+```
+
+# Regression 
+
+```{r}
+lm1 <- dynlm(SeasCount.Report ~ prop.fem + prop.priv + FRBKCLMCIM + LREM25TTUSM156S, final.tsdf)
+```
+
+```{r}
+stargazer(lm1, type = "text")
+```
+
+

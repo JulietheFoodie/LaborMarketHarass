@@ -18,7 +18,7 @@ library(plyr)
 # Upload
 ```{r}
 
-df <- read_csv("export1.csv")
+df <- read_csv("MD1export.csv")
 str(df)
 ```
 
@@ -27,6 +27,9 @@ str(df)
 
 # Graphs
 
+```{r}
+ggplot
+```
 
 
 

@@ -1,0 +1,23 @@
+---
+title: "Stationary Time Series"
+author: "Julie Norman"
+date: "6/2/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+ggplot(finaldf, aes(x = finaldf$DATEym, y = SeasCount.Report)) +
+  geom_point()
+```
+
+
+```{r}
+acf(finaldf$SeasCount.Report, lag.max = 36)
+```
+
+https://www.r-bloggers.com/time-series-analysis-building-a-model-on-non-stationary-time-series/
+

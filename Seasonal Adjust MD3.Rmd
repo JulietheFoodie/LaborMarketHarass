@@ -13,12 +13,13 @@ library("readr")
 library("zoo") 
 library("dplyr")
 library("lubridate")
+library("plyr")
 ```
 
 # Upload
 
 ```{r}
-df <- read_csv("export1.csv")
+df <- read.csv("MD1export.csv")
 str(df)
 ```
 
@@ -114,7 +115,11 @@ str(seasadj_df)
 
 
 ```{r}
+df$X1 <- df$X
+
+
 finalSdf <- join(df, seasadj_df, by = "X1")
+
 
 
 ```
@@ -131,7 +136,7 @@ str(finalSdf)
 # Export 
 
 ```{r}
-write.csv(finalSdf, file = "export2.csv")
+write.csv(finalSdf, file = "MD3export.csv")
 ```
 
 

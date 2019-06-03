@@ -1,0 +1,57 @@
+---
+title: "Quarterly Data"
+author: "Julie Norman"
+date: "3/21/2019"
+output: html_document
+---
+
+# Library
+```{r}
+library("zoo")
+library("dplyr")
+```
+
+# Import Data
+
+```{r}
+finalSdf <- read.csv("export2.csv")
+
+is.atomic(finalSdf)
+```
+
+# Aggregate Quarterly 
+
+```{r}
+
+finalSdf$DATEymd <- as.Date(finalSdf$DATEymd, "%Y-%m-%d")
+
+subset <- finalSdf %>%
+  filter(DATEymd >= "1996-01-01")
+
+ts.subset <- ts(subset, start = c(1996, 1), frequency = 12)
+q.df <- as.data.frame(aggregate(ts.subset, nfrequency = 4))
+q.df$X <- seq.int(nrow(q.df))
+
+
+
+
+```
+
+# Adjust sums to averages
+
+```{r}
+
+q.df$prop.fem <- q.df$Freq.Female / q.df$Count.Report
+
+q.df$prop.priv <- ( q.df$Freq.Private.College.University + q.df$Freq.Private.College.University..Inactive.Code + q.df$Freq.Private.Elem.Secondary.School + q.df$Freq.Private.Employer + q.df$Freq.Private.Employment.Agency ) / q.df$Count.Report
+
+
+```
+
+# Create Time Series
+
+```{r}
+q.tsdf <- ts(q.df, start = c(1996, 1), frequency = 4)
+```
+
+

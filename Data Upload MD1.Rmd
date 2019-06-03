@@ -84,10 +84,10 @@ merge1df <- merge(firmsizedf, firmtypedf, by = "Var1")
 
 merge2df <- merge(merge1df, sexdf, by = "Var1")
 
-str(merge2df)
+names(merge2df)
 ```
 
-### rename columns
+### rename variables
 
 ```{r}
 colnames(merge2df)[colnames(merge2df) == "Var1"] <- "DATEym"
@@ -98,7 +98,7 @@ merge2df$Count.Report <- merge2df$`Freq.CP Sex Not Available/Applicable`+ merge2
 
 merge2df$prop.fem <- merge2df$Freq.Female/merge2df$Count.Report
 
-merge2df$prop.priv <- merge2df$`Freq.Private Employer`/merge2df$Count.Report
+merge2df$prop.priv <- ( merge2df$`Freq.Private College/University` + merge2df$`Freq.Private College/University (Inactive Code)` + merge2df$`Freq.Private Elem/Secondary School` + merge2df$`Freq.Private Employer` + merge2df$`Freq.Private Employment Agency` )/merge2df$Count.Report
 
 
 
@@ -107,37 +107,45 @@ merge2df$prop.priv <- merge2df$`Freq.Private Employer`/merge2df$Count.Report
 
 
 
-
-# Labor Market Momentum Index
+# Labor Market Conditions Index
+## Labor Market Momentum Index
 
 ```{r}
-#Labor Market Conditions Index
-LMCIdf <- read_csv("FRBKCLMCIM.csv")
 
+LMCIdf <- read.csv("FRBKCLMCIM.csv")
 
+LMCIdf
 ```
 
-# Labor Market Indicator
+
 ```{r}
+LMCIdf$DATE <- as.Date(LMCIdf$DATE, "%Y-%m-%d")
+
 LMCIdf$DATEym <- format(LMCIdf$DATE, "%Y-%m")
 ```
 
-https://fred.stlouisfed.org/series/LREM25TTUSM156S#
+https://fred.stlouisfed.org/series/FRBKCLMCIM
 
 
-#Employment Rate
+# Civilian Employment Rate
 
 ```{r}
-EMPLRTdf <- read_csv("LREM25TTUSM156S.csv")
+EMPLRTdf <- read.csv("LREM25TTUSM156S.csv")
+
+str(EMPLRTdf)
 ```
 
 ```{r}
-EMPLRTdf %>% filter(EMPLRTdf$DATE >= "1995-01-01")
+EMPLRTdf$DATE <- as.Date(EMPLRTdf$DATE, "%Y-%m-%d")
+
+EMPLRTdf %>% filter(EMPLRTdf$DATE >= "1995-01-01") 
+
+
 
 EMPLRTdf$DATEym <- format(EMPLRTdf$DATE, "%Y-%m")
 ```
 
-
+employment rate 
 
 https://fred.stlouisfed.org/series/LREM25TTUSM156S#
 
@@ -148,6 +156,7 @@ https://fred.stlouisfed.org/series/LREM25TTUSM156S#
 finaldf <- list(merge2df, LMCIdf, EMPLRTdf) %>% 
  reduce(left_join, by = "DATEym") 
 
+head(finaldf)
 ```
 
 
@@ -164,17 +173,19 @@ finaldf$Freq.NULL <- NULL
 
 #Ambiguous
 names(finaldf)[names(finaldf) == 'Freq.Other'] <- 'Freq.Other Firm Type'
+names(finaldf)[names(finaldf) == 'LREM25TTUSM156S'] <- 'CivEmployRate'
+names(finaldf)[names(finaldf) == 'FRBKCLMCIM'] <- 'LaborMomen'
 
-str(finaldf)
-
+head(finaldf)
 ```
 
 
 
 
 ```{r}
-write.csv(finaldf, file = "export1.csv")
+write.csv(finaldf, file = "MD1export.csv")
 ```
+
 
 
 
